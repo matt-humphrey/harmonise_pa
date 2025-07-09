@@ -1,0 +1,24 @@
+[project]
+name = "harmonise-pa"
+version = "0.1.0"
+description = "Harmonise all variables for physical assessments."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "odyssey",
+    "polars>=1.31.0",
+    "pyarrow>=20.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "altair>=5.5.0",
+    "marimo>=0.14.10"
+]
+
+[tool.uv.sources]
+odyssey = { path = "C:/Users/00113294/Documents/WIP/odyssey", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

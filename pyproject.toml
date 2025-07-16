@@ -5,7 +5,7 @@ description = "Harmonise all variables for physical assessments."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "odyssey",
+    "banksia",
     "polars>=1.31.0",
     "pyarrow>=20.0.0",
 ]
@@ -13,11 +13,26 @@ dependencies = [
 [dependency-groups]
 dev = [
     "altair>=5.5.0",
-    "marimo>=0.14.10"
+    "marimo>=0.14.10",
+    "pytest>=8.4.1",
+    "ruff>=0.12.3",
+    "watchdog>=6.0.0",
 ]
 
 [tool.uv.sources]
-odyssey = { path = "C:/Users/00113294/Documents/WIP/odyssey", editable = true }
+banksia = { path = "C:/Users/00113294/Projects/banksia", editable = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+exclude = [".venv", "tests/*"]
+
+[tool.marimo.runtime]
+watcher_on_save = "autorun"
 
 [build-system]
 requires = ["hatchling"]

@@ -253,12 +253,6 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    mo.md("""### Gen 2""")
-    return
-
-
-@app.cell
-def _(mo):
     mo.image(src="projects/anthropometry/img/Y5_2.PNG")
     return
 
@@ -289,6 +283,12 @@ def _():
 def _(RAW_DATA, bk, vars_g105):
     df_g105, meta_g105 = bk.read_sav(RAW_DATA / "G105_PA.sav", usecols=vars_g105)
     return (meta_g105,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""### Gen 2""")
+    return
 
 
 @app.cell
@@ -414,6 +414,172 @@ def _():
 def _(RAW_DATA, bk, vars_g208):
     df_g208, meta_g208 = bk.read_sav(RAW_DATA / "G208_PA.sav", usecols=vars_g208)
     return (meta_g208,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y10""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y10.PNG")
+    return
+
+
+@app.cell
+def _(meta_g210, pl):
+    meta_g210.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g210 = [
+        "ID",
+        "G210_A1",
+        "G210_A2",
+        "G210_A4",
+        "G210_A6",
+        "G210_A7",
+        "G210_A8",
+        "G210_A9",
+        "G210_A10",
+        "G210_BP4",
+        "G210_BP1",
+        "G210_BP2",
+        "G210_BP5",
+        "G210_BP3",
+    ]
+    return (vars_g210,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g210):
+    df_g210, meta_g210 = bk.read_sav(RAW_DATA / "G210_PA.sav", usecols=vars_g210)
+    return (meta_g210,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y14""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md("""### Gen 1""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y14_PQ.PNG")
+    return
+
+
+@app.cell
+def _(meta_g114, pl):
+    meta_g114.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g114 = [
+        "ID",
+        "G114_A1",
+        "G114_A2",
+        "G114_A6",
+        "G114_BP1",
+        "G114_BP2",
+        "G114_BP3",
+        "G114_BP5",
+        "G114_BP4",
+    ]
+    return (vars_g114,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g114):
+    df_g114, meta_g114 = bk.read_sav(RAW_DATA / "G114_PA.sav", usecols=vars_g114)
+    return (meta_g114,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""### Gen 2""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y14.PNG")
+    return
+
+
+@app.cell
+def _(meta_g214, pl):
+    meta_g214.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell
+def _():
+    vars_g214 = [
+        "ID",
+        "G214_A1",
+        "G214_A1A",
+        "G214_A1B",
+        "G214_A2",
+        "G214_A2A",
+        "G214_A2B",
+        "G214_A6",
+        "G214_A12",
+        "G214_A12A",
+        "G214_A12B",
+        "G214_A13",
+        "G214_A13A",
+        "G214_A13B",
+        "G214_A14",
+        "G214_BP46",
+        "G214_BP47",
+        "G214_BP48",
+        "G214_BP49",
+        "G214_BP50",
+        "G214_BP51",
+        "G214_BP52",
+        "G214_BP53",
+        "G214_BP54",
+        "G214_BP55",
+        "G214_BP56",
+        "G214_BP57",
+        "G214_BP58",
+        "G214_BP59",
+        "G214_BP60",
+        "G214_BP61",
+        "G214_BP62",
+        "G214_BP63",
+        "G214_BP1",
+        "G214_BP2",
+        "G214_BP3",
+        "G214_BP4",
+        "G214_BP5",
+        "G214_CBP6",
+        "G214_CBP7",
+        "G214_CBP8",
+        "G214_CBP9",
+        "G214_CBP10",
+        "G214_CBP11",
+    ]
+    return (vars_g214,)
+
+
+@app.cell
+def _(RAW_DATA, bk, vars_g214):
+    df_g214, meta_g214 = bk.read_sav(RAW_DATA / "G214_PA.sav", usecols=vars_g214)
+    return (meta_g214,)
 
 
 if __name__ == "__main__":

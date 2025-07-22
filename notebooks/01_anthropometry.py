@@ -4,19 +4,19 @@ __generated_with = "0.14.11"
 app = marimo.App(width="medium")
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
     My approach here has been to take a screenshot of the relevant anthropometry (physical measurement) components of the physical assessment sheets, and to pull in the data from the corresponding SPSS file. I read the labels and field values and get a quick check that the variables in the dataset align with the section of the assessment I'm investigating.
 
-    Next steps will be to dig more deeply into the questions:
-    - Check the units of measurement are consistent
-    - Verify that the field values correspond to the actual options
-    - Check the metadata (labels and field values) align across follow-ups
-    - Check the data schema for each variable
-        - is the type consistent (always a string, or numeric value)
-        - if numeric, is it always an int, or float, and if float, is the rounding consistent?
+    - Next steps will be to dig more deeply into the questions:
+        - Check the units of measurement are consistent
+        - Verify that the field values correspond to the actual options
+        - Check the metadata (labels and field values) align across follow-ups
+        - Check the data schema for each variable
+            - is the type consistent (always a string, or numeric value)
+            - if numeric, is it always an int, or float, and if float, is the rounding consistent?
     """
     )
     return
@@ -27,14 +27,12 @@ def _():
     import banksia as bk
     import marimo as mo
     import polars as pl
-
     return bk, mo, pl
 
 
 @app.cell
 def _():
     from harmonise_pa.config import RAW_DATA
-
     return (RAW_DATA,)
 
 
@@ -62,7 +60,7 @@ def _(df_g200):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _():
     vars_g200 = [
         "ID",
@@ -113,7 +111,7 @@ def _(df_g201):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _():
     vars_g201 = [
         "ID",
@@ -525,7 +523,7 @@ def _(meta_g214, pl):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _():
     vars_g214 = [
         "ID",
@@ -576,10 +574,619 @@ def _():
     return (vars_g214,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(RAW_DATA, bk, vars_g214):
     df_g214, meta_g214 = bk.read_sav(RAW_DATA / "G214_PA.sav", usecols=vars_g214)
     return (meta_g214,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y17""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md("""### Gen 1""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    Can't find actual examination sheet for Y17 parent physical assessment (in IRDS anyway).
+    Based on the protocol, it was quite simple.
+    """
+    )
+    return
+
+
+@app.cell
+def _(meta_g117, pl):
+    meta_g117.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g117 = [
+        "ID",
+        "G117_A1",
+        "G117_A2",
+        "G117_A6",
+        "G117_BP1",
+        "G117_BP2",
+        "G117_BP3",
+        "G117_BP5",
+        "G117_BP4",
+    ]
+    return (vars_g117,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g117):
+    df_g117, meta_g117 = bk.read_sav(RAW_DATA / "G117_PA.sav", usecols=vars_g117)
+    return (meta_g117,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""### Gen 2""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y17_1.PNG")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y17_2.PNG")
+    return
+
+
+@app.cell
+def _(meta_g217, pl):
+    meta_g217.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g217 = [
+        "ID",
+        "G217_BP_TIM",
+        "G217_BP_TMP",
+        "G217_BP46",
+        "G217_BP47",
+        "G217_BP48",
+        "G217_BP49",
+        "G217_BP50",
+        "G217_BP51",
+        "G217_BP52",
+        "G217_BP53",
+        "G217_BP54",
+        "G217_BP55",
+        "G217_BP56",
+        "G217_BP57",
+        "G217_BP58",
+        "G217_BP59",
+        "G217_BP60",
+        "G217_BP61",
+        "G217_BP62",
+        "G217_BP63",
+        "G217_BP1",
+        "G217_BP2",
+        "G217_BP3",
+        "G217_BP5",
+        "G217_A1",
+        "G217_A2",
+        "G217_BMI",
+        "G217_A6",
+        "G217_A7",
+        "G217_A8",
+        "G217_A9",
+        "G217_A10",
+        "G217_A12",
+        "G217_A13",
+        "G217_A14",
+        "G217_A15",
+    ]
+    return (vars_g217,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g217):
+    df_g217, meta_g217 = bk.read_sav(RAW_DATA / "G217_PA.sav", usecols=vars_g217)
+    return (meta_g217,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y20""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y20_1.PNG")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y20_2.PNG")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y20_3.PNG")
+    return
+
+
+@app.cell
+def _(meta_g220, pl):
+    meta_g220.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g220 = [
+        "ID",
+        "G220_BP_TIM",
+        "G220_BP_TMP",
+        "G220_CUFF",
+        "G220_BP46",
+        "G220_BP47",
+        "G220_BP48",
+        "G220_BP49",
+        "G220_BP50",
+        "G220_BP51",
+        "G220_BP52",
+        "G220_BP53",
+        "G220_BP54",
+        "G220_BP55",
+        "G220_BP56",
+        "G220_BP57",
+        "G220_BP58",
+        "G220_BP59",
+        "G220_BP60",
+        "G220_BP61",
+        "G220_BP62",
+        "G220_BP63",
+        "G220_BP1",
+        "G220_BP2",
+        "G220_BP5",
+        "G220_A2",
+        "G220_A1",
+        "G220_BMI",
+        "G220_A12A",
+        "G220_A12B",
+        "G220_A12",
+        "G220_A13A",
+        "G220_A13B",
+        "G220_A13",
+        "G220_A14",
+        "G220_A15A",
+        "G220_A15B",
+        "G220_A15C",
+        "G220_A15",
+        "G220_A16A",
+        "G220_A16B",
+        "G220_A16",
+        "G220_A17A",
+        "G220_A17B",
+        "G220_A23A",
+        "G220_A23B",
+        "G220_SF_RA",
+        "G220_A7A",
+        "G220_A7B",
+        "G220_A7",
+        "G220_A8A",
+        "G220_A8B",
+        "G220_A8C",
+        "G220_A10A",
+        "G220_A10B",
+        "G220_A10C",
+        "G220_A9A",
+        "G220_A9B",
+        "G220_A9C",
+        "G220_A18A",
+        "G220_A18B",
+        "G220_A18",
+        "G220_A19",
+        "G220_A20",
+        "G220_A21",
+        "G220_A22",
+    ]
+    return (vars_g220,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g220):
+    df_g220, meta_g220 = bk.read_sav(RAW_DATA / "G220_PAdata.sav", usecols=vars_g220)
+    return (meta_g220,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y22""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y22.PNG")
+    return
+
+
+@app.cell
+def _(meta_g222, pl):
+    meta_g222.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g222 = [
+        "ID",
+        "G222_A6_1",
+        "G222_BPTM",
+        "G222_BPTP",
+        "G222_BP46",
+        "G222_BP47",
+        "G222_BP48",
+        "G222_BP49",
+        "G222_BP50",
+        "G222_BP51",
+        "G222_BP52",
+        "G222_BP53",
+        "G222_BP54",
+        "G222_BP55",
+        "G222_BP56",
+        "G222_BP57",
+        "G222_BP58",
+        "G222_BP59",
+        "G222_BP60",
+        "G222_BP61",
+        "G222_BP62",
+        "G222_BP63",
+        "G222_A1",
+        "G222_A2",
+        "G222_BMI",
+        "G222_A12",
+        "G222_A12A",
+        "G222_A12B",
+        "G222_A13",
+        "G222_A13A",
+        "G222_A13B",
+        "G222_A14",
+        "G222_A7A",
+        "G222_A7B",
+        "G222_A7C",
+        "G222_A8A",
+        "G222_A8B",
+        "G222_A8C",
+        "G222_A10A",
+        "G222_A10B",
+        "G222_A10C",
+        "G222_A9A",
+        "G222_A9B",
+        "G222_A9C",
+    ]
+    return (vars_g222,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g222):
+    df_g222, meta_g222 = bk.read_sav(RAW_DATA / "G222_PA.sav", usecols=vars_g222)
+    return (meta_g222,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y27""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y27_1.PNG")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.image(src="projects/anthropometry/img/Y27_2.PNG")
+    return
+
+
+@app.cell
+def _(meta_g227, pl):
+    meta_g227.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g227 = [
+        "ID",
+        "G227_BP_TIM",
+        "G227_BP_TMP",
+        "G227_CUFF",
+        "G227_A6",
+        "G227_BP46",
+        "G227_BP47",
+        "G227_BP48",
+        "G227_BP49",
+        "G227_BP50",
+        "G227_BP51",
+        "G227_BP52",
+        "G227_BP53",
+        "G227_BP54",
+        "G227_BP55",
+        "G227_BP56",
+        "G227_BP57",
+        "G227_BP58",
+        "G227_BP59",
+        "G227_BP60",
+        "G227_BP61",
+        "G227_BP62",
+        "G227_BP63",
+        "G227_AvSBP",
+        "G227_AvDBP",
+        "G227_AvHR",
+        "G227_A2",
+        "G227_A1",
+        "G227_A2B",
+        "G227_BMI",
+        "G227_BP10_1",
+        "G227_BP11_1",
+        "G227_BP12_1",
+        "G227_BP13_1",
+        "G227_BP14_1",
+        "G227_BP15_1",
+        "G227_BP16_1",
+        "G227_BP17_1",
+        "G227_BP18_1",
+        "G227_BP19_1",
+        "G227_BP20_1",
+        "G227_BP21_1",
+        "G227_BP22_1",
+        "G227_BP23_1",
+        "G227_BP24_1",
+        "G227_BP25_1",
+        "G227_BP26_1",
+        "G227_BP27_1",
+        "G227_A12A",
+        "G227_A12B",
+        "G227_A12",
+        "G227_A13A",
+        "G227_A13B",
+        "G227_A13",
+        "G227_A14",
+        "G227_A7A",
+        "G227_A7B",
+        "G227_A7",
+        "G227_A11A",
+        "G227_A11B",
+        "G227_A11",
+        "G227_A8A",
+        "G227_A8B",
+        "G227_A8C",
+        "G227_A10A",
+        "G227_A10B",
+        "G227_A10C",
+        "G227_A9A",
+        "G227_A9B",
+        "G227_A9C",
+    ]
+    return (vars_g227,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g227):
+    df_g227, meta_g227 = bk.read_sav(RAW_DATA / "G227_PA.sav", usecols=vars_g227)
+    return (meta_g227,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## Y28""")
+    return
+
+
+@app.cell
+def _():
+    # mo.image(src="projects/anthropometry/img/Y28.PNG")
+    return
+
+
+@app.cell
+def _(meta_g228, pl):
+    meta_g228.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g228 = [
+        "ID",
+        "G228_A1",
+        "G228_A2A",
+        "G228_A2B",
+        "G228_A6",
+        "G228_A12",
+        "G228_A12A",
+        "G228_A12B",
+        "G228_A13",
+        "G228_A13A",
+        "G228_A13B",
+        "G228_A14",
+        "G228_BP46",
+        "G228_BP47",
+        "G228_BP48",
+        "G228_BP49",
+        "G228_BP50",
+        "G228_BP51",
+        "G228_BP52",
+        "G228_BP53",
+        "G228_BP54",
+        "G228_BP55",
+        "G228_BP56",
+        "G228_BP57",
+        "G228_BP58",
+        "G228_BP59",
+        "G228_BP60",
+        "G228_BP61",
+        "G228_BP62",
+        "G228_BP63",
+        "G228_BP_TIM",
+        "G228_BP_TMP",
+        "G228_CUFF",
+        "G228_BMI",
+    ]
+    return (vars_g228,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g228):
+    df_g228, meta_g228 = bk.read_sav(RAW_DATA / "G228_PA.sav", usecols=vars_g228)
+    return (meta_g228,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## G126""")
+    return
+
+
+@app.cell
+def _():
+    # mo.image(src="projects/anthropometry/img/G126.PNG")
+    return
+
+
+@app.cell
+def _(meta_g126, pl):
+    meta_g126.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g126 = [
+        "ID",
+        "G126_CUFF",
+        "G126_BP_TIM",
+        "G126_BP_TMP",
+        "G126_BP46",
+        "G126_BP47",
+        "G126_BP48",
+        "G126_BP49",
+        "G126_BP50",
+        "G126_BP51",
+        "G126_BP52",
+        "G126_BP53",
+        "G126_BP54",
+        "G126_BP55",
+        "G126_BP56",
+        "G126_BP57",
+        "G126_BP58",
+        "G126_BP59",
+        "G126_BP60",
+        "G126_BP61",
+        "G126_BP62",
+        "G126_BP63",
+        "G126_A2",
+        "G126_A1",
+        "G126_BMI",
+        "G126_A12A",
+        "G126_A12B",
+        "G126_A12",
+        "G126_A13A",
+        "G126_A13B",
+        "G126_A13",
+        "G126_A14",
+    ]
+    return (vars_g126,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g126):
+    df_g126, meta_g126 = bk.read_sav(RAW_DATA / "G126_PAdata.sav", usecols=vars_g126)
+    return (meta_g126,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""## G0G1""")
+    return
+
+
+@app.cell
+def _():
+    # mo.image(src="projects/anthropometry/img/G0G1.PNG")
+    return
+
+
+@app.cell
+def _(meta_g0g1, pl):
+    meta_g0g1.select(pl.col("Variable", "Label", "Field Values"))
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    vars_g0g1 = [
+        "ID",
+        "G0G1_WEIGHT",
+        "G0G1_HEIGHT1",
+        "G0G1_HEIGHT2",
+        "G0G1_HEIGHT_AV",
+        "G0G1_WAIST1",
+        "G0G1_WAIST2",
+        "G0G1_WAIST_AV",
+        "G0G1_HIP1",
+        "G0G1_HIP2",
+        "G0G1_HIP_AV",
+        "G0G1_WAIST_HIP_RATIO",
+        "G0G1_BMI",
+        "G0G1_BP_DONE",
+        "G0G1_BP_TIME",
+        "G0G1_BP_CUFF",
+        "G0G1_BPS0",
+        "G0G1_BPD0",
+        "G0G1_BPP0",
+        "G0G1_BPS2",
+        "G0G1_BPD2",
+        "G0G1_BPP2",
+        "G0G1_BPS4",
+        "G0G1_BPD4",
+        "G0G1_BPP4",
+        "G0G1_BPS6",
+        "G0G1_BPD6",
+        "G0G1_BPP6",
+        "G0G1_BPS8",
+        "G0G1_BPD8",
+        "G0G1_BPP8",
+        "G0G1_BPS10",
+        "G0G1_BPD10",
+        "G0G1_BPP10",
+    ]
+    return (vars_g0g1,)
+
+
+@app.cell(hide_code=True)
+def _(RAW_DATA, bk, vars_g0g1):
+    df_g0g1, meta_g0g1 = bk.read_sav(RAW_DATA / "G0G1_PA.sav", usecols=vars_g0g1)
+    return (meta_g0g1,)
 
 
 if __name__ == "__main__":

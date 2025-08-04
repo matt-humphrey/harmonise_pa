@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.14.12"
+__generated_with = "0.14.16"
 app = marimo.App(width="medium")
 
 
@@ -11,8 +11,10 @@ def _():
 
     import banksia as bk
     import polars as pl
+    import pointblank as pb
+    import marimo as mo
 
-    return Path, TypeAlias, bk, pl
+    return Path, TypeAlias, bk, mo, pb, pl
 
 
 @app.cell
@@ -80,6 +82,12 @@ def _(DATASETS, read_all_datasets):
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""### A10 - Abdominal Skinfolds""")
+    return
+
+
+@app.cell
 def _():
     variable = "A10"
     return (variable,)
@@ -87,13 +95,59 @@ def _():
 
 @app.cell
 def _(df, pl, variable):
-    df.select(pl.col(f"^.*{variable}$"))
+    df_a10 = df.select(pl.col(f"^.*{variable}$"))
+    df_a10
+    return (df_a10,)
+
+
+@app.cell
+def _(df_a10, pb):
+    pb.Validate(data=df_a10).col_vals_between(columns=pb.everything(), left=0, right=45, na_pass=True).interrogate()
+    return
+
+
+@app.cell
+def _(df_a10, pl):
+    df_a10_new = (
+        df_a10
+        .with_columns(pl.all().replace({999: None}))
+        .with_columns(pl.all().round(decimals=2, mode="half_away_from_zero"))             
+    )
+
+    df_a10_new
+    return (df_a10_new,)
+
+
+@app.cell
+def _(df_a10_new, pb):
+    validate = (
+        pb.Validate(data=df_a10_new)
+        .col_vals_between(columns=pb.everything(), left=0, right=60, na_pass=True)
+        .interrogate()
+    )
+
+    validate
     return
 
 
 @app.cell
 def _(meta, pl, variable):
-    meta.filter(pl.col("basename").eq(variable))
+    meta_a10 = meta.filter(pl.col("basename").eq(variable))
+    meta_a10
+    return
+
+
+@app.cell
+def _():
+    A10 = {
+        "basename": r'_A10$',
+        "field_label": "Abdominal skinfold (mm)",
+        "field_type": "Numeric",
+        "field_width": 4,
+        "decimals": 2,
+        "var_type": "scale",
+        "field_values": None,
+    }
     return
 
 

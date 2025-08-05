@@ -10,9 +10,9 @@ def _():
     from typing import TypeAlias
 
     import banksia as bk
-    import polars as pl
-    import pointblank as pb
     import marimo as mo
+    import pointblank as pb
+    import polars as pl
 
     return Path, TypeAlias, bk, mo, pb, pl
 
@@ -59,7 +59,7 @@ def _(Path, RAW_DATA, TypeAlias, bk, pl):
 
         combined_lf = join_lazy_frames(lfs)
         combined_meta = (
-            pl.concat(metas, how='vertical')
+            pl.concat(metas, how="vertical")
             .filter(pl.col("Variable").ne("ID"))
             .with_columns(basename=pl.col("Variable").str.slice(5))
         )
@@ -83,46 +83,46 @@ def _(DATASETS, read_all_datasets):
 
 @app.cell
 def _(mo):
-    mo.md(r"""### A10 - Abdominal Skinfolds""")
+    mo.md(r"""### A6 - Mid-arm circumference""")
     return
 
 
 @app.cell
 def _():
-    variable = "A10"
+    variable = "A6"
     return (variable,)
 
 
 @app.cell
 def _(df, pl, variable):
-    df_a10 = df.select(pl.col(f"^.*{variable}$"))
-    df_a10
-    return (df_a10,)
+    df_a6 = df.select(pl.col(f"^.*{variable}$"))
+    df_a6
+    return (df_a6,)
 
 
 @app.cell
-def _(df_a10, pb):
-    pb.Validate(data=df_a10).col_vals_between(columns=pb.everything(), left=0, right=45, na_pass=True).interrogate()
+def _(df_a6, pb):
+    pb.Validate(data=df_a6).col_vals_between(
+        columns=pb.everything(), left=0, right=45, na_pass=True
+    ).interrogate()
     return
 
 
 @app.cell
-def _(df_a10, pl):
-    df_a10_new = (
-        df_a10
-        .with_columns(pl.all().replace({999: None}))
-        .with_columns(pl.all().round(decimals=2, mode="half_away_from_zero"))             
+def _(df_a6, pl):
+    df_a6_new = df_a6.with_columns(pl.all().replace({-99: None, 999: None})).with_columns(
+        pl.all().round(decimals=2, mode="half_away_from_zero")
     )
 
-    df_a10_new
-    return (df_a10_new,)
+    df_a6_new
+    return (df_a6_new,)
 
 
 @app.cell
-def _(df_a10_new, pb):
+def _(df_a6_new, pb):
     validate = (
-        pb.Validate(data=df_a10_new)
-        .col_vals_between(columns=pb.everything(), left=0, right=60, na_pass=True)
+        pb.Validate(data=df_a6_new)
+        .col_vals_between(columns=pb.everything(), left=0, right=50, na_pass=True)
         .interrogate()
     )
 
@@ -132,19 +132,19 @@ def _(df_a10_new, pb):
 
 @app.cell
 def _(meta, pl, variable):
-    meta_a10 = meta.filter(pl.col("basename").eq(variable))
-    meta_a10
+    meta_a6 = meta.filter(pl.col("basename").eq(variable))
+    meta_a6
     return
 
 
 @app.cell
 def _():
-    A10 = {
-        "basename": r'_A10$',
-        "field_label": "Abdominal skinfold (mm)",
+    A6 = {
+        "basename": r"_A6$",
+        "field_label": "Mid-arm circumference (cm)",
         "field_type": "Numeric",
         "field_width": 4,
-        "decimals": 2,
+        "decimals": 1,
         "var_type": "scale",
         "field_values": None,
     }

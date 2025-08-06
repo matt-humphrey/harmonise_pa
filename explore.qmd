@@ -1,0 +1,72 @@
+# Testing!
+
+```{python}
+import pointblank as pb
+import polars as pl
+import banksia as bk
+from pathlib import Path
+```
+
+```{python}
+from harmonise_pa.config import RAW_DATA, INTERIM_DATA, DATASETS
+from harmonise_pa import read_all_datasets
+```
+
+```{python}
+df, meta = read_all_datasets(DATASETS)
+```
+
+```{python}
+variable = "HEIGHT"
+dfx = df.select(pl.col(f"^.*{variable}$"))
+```
+
+```{python}
+pb.Validate(data=dfx).col_vals_between(
+    columns=pb.everything(), left=10, right=200, na_pass=True
+).interrogate()
+```
+
+```{python}
+# TODO: improve the conditional handling here; apply multiplication if height between 0 and 2.5 for example
+dfx_new = (
+    dfx.with_columns(pl.all().replace({-99: None, 888: None, 999: None}))
+    .with_columns(
+        pl.col(
+            "G214_HEIGHT",
+            "G217_HEIGHT",
+            "G220_HEIGHT",
+            "G222_HEIGHT",
+            "G227_HEIGHT",
+            "G126_HEIGHT",
+            "G0G1_HEIGHT",
+        ).map_batches(lambda x: x * 100)
+    )
+    .with_columns(pl.all().round(decimals=2, mode="half_away_from_zero"))
+    # There were four strange values for G0G1_HEIGHT -> replace them with None
+    .with_columns(
+        pl.when(pl.col("G0G1_HEIGHT") > 210)
+        .then(None)
+        .otherwise(pl.col("G0G1_HEIGHT"))
+        .alias("G0G1_HEIGHT")
+    )
+)
+```
+
+```{python}
+validate = (
+    pb.Validate(data=dfx_new)
+    .col_vals_between(columns=pb.ends_with("HEIGHT"), left=10, right=210, na_pass=True)
+    .interrogate()
+)
+
+validate
+```
+
+```{python}
+validate.get_step_report(i=18)
+```
+
+```{python}
+metax = meta.filter(pl.col("basename").eq(variable))
+```

@@ -29,8 +29,17 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 
+ignore = [
+    "E402", # module level import not at top of file
+    "E501", # line too long (maximum 100 characters)
+    "F811", # redefinition of unused name
+    "E203", # whitespace before ':'
+    "F841", # local variable 'name' is assigned to but never used
+    "E702", # multiple statements on one line (semicolon)
+]
+
 [tool.ruff.lint]
-exclude = [".venv", "tests/*"]
+exclude = ["docs", ".venv", "tests/*"]
 
 [tool.marimo.runtime]
 watcher_on_save = "autorun"

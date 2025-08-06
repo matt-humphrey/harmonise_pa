@@ -13,5 +13,5 @@ wheels/
 __marimo__/
 data/
 docs/
-Log.md
-sandbox.ipynb
+img/
+*.log

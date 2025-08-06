@@ -3,23 +3,38 @@
 import polars as pl
 from polars import DataFrame
 
-# TODO: a lot of these will be similar -> DRY!!
-# Create re-usable function with generic inputs defined
-# (like round, which takes an input, but defaults to 2, and with mode="half_away...")
-# df = df.with_columns(
-#     pl.col("^.*A6$").replace({-99: None, 999: None}).round(decimals=2, mode="half_away_from_zero"),
-#     pl.col("^.*A10$").replace({999: None}).round(decimals=2, mode="half_away_from_zero"),
-# )
+# TODO: create a config file to explicitly define which variables should have which values replaced
+# Do this for rounding also
 
 
 def replace_missing_values(df: DataFrame) -> DataFrame:
     """Replace values for each given column that..."""
-    return df.with_columns(pl.col("^.*HEIGHT$").replace({-99: None, 888: None, 999: None}))
+    return df.with_columns(
+        pl.col("^.*HEIGHT$").replace({-99: None, 888: None, 999: None}),
+        pl.col("^.*A3$").replace({999: None}),  # 999 for all
+        pl.col("^.*A4$").replace({-99: None, 999: None}),  # -99 for G200, 999 for G201 to G210
+        pl.col("^.*A5$").replace({-99: None, 999: None}),  # -99 for G200, 999 for G201 on
+        pl.col("^.*A6$").replace({-99: None, 999: None}),  # -99 for G200, 999 for all bar G114/G227
+        pl.col("^.*A7$").replace({-99: None, 999: None}),  # -99 for G200, 999 for all bar G220/G227
+        pl.col("^.*A8$").replace({999: None}),  # 999 for all bar G220 and G227
+        pl.col("^.*A9$").replace({999: None}),  # 999 for all bar G220 and G227
+        pl.col("^.*A10$").replace({999: None}),  # 999 for all bar G220 and G227
+    )
 
 
 def apply_rounding(df: DataFrame) -> DataFrame:
     """Apply rounding to numeric columns"""
-    return df.with_columns(pl.col("^.*HEIGHT$").round(decimals=2, mode="half_away_from_zero"))
+    return df.with_columns(
+        pl.col("^.*HEIGHT$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A3$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A4$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A5$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A6$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A7$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A8$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A9$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A10$").round(decimals=1, mode="half_away_from_zero"),
+    )
 
 
 def harmonise_height(df: DataFrame) -> DataFrame:

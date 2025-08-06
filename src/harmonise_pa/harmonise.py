@@ -1,0 +1,51 @@
+# This file should define the functions to harmonise each variable/dataset
+
+import polars as pl
+from polars import DataFrame
+
+# TODO: a lot of these will be similar -> DRY!!
+# Create re-usable function with generic inputs defined
+# (like round, which takes an input, but defaults to 2, and with mode="half_away...")
+# df = df.with_columns(
+#     pl.col("^.*A6$").replace({-99: None, 999: None}).round(decimals=2, mode="half_away_from_zero"),
+#     pl.col("^.*A10$").replace({999: None}).round(decimals=2, mode="half_away_from_zero"),
+# )
+
+
+def replace_missing_values(df: DataFrame) -> DataFrame:
+    """Replace values for each given column that..."""
+    return df.with_columns(pl.col("^.*HEIGHT$").replace({-99: None, 888: None, 999: None}))
+
+
+def apply_rounding(df: DataFrame) -> DataFrame:
+    """Apply rounding to numeric columns"""
+    return df.with_columns(pl.col("^.*HEIGHT$").round(decimals=2, mode="half_away_from_zero"))
+
+
+def harmonise_height(df: DataFrame) -> DataFrame:
+    """
+    Harmonise `HEIGHT` variables.
+
+    Height was initially captured in centimetres, but after G214, it was captured in metres.
+    For consistency, all columns with height in metres were converted to centimetres.
+    Note: G114 and G117 were captured in centimetres still.
+
+    For G0G1 specifically, there were four errant values reported between 78 m and 86 m.
+    These values were hence removed.
+    """
+    return df.with_columns(
+        pl.col(
+            "G214_HEIGHT",
+            "G217_HEIGHT",
+            "G220_HEIGHT",
+            "G222_HEIGHT",
+            "G227_HEIGHT",
+            "G126_HEIGHT",
+            "G0G1_HEIGHT",
+        ).map_batches(lambda x: x * 100)
+    ).with_columns(
+        pl.when(pl.col("G0G1_HEIGHT") > 210)
+        .then(None)
+        .otherwise(pl.col("G0G1_HEIGHT"))
+        .alias("G0G1_HEIGHT")
+    )

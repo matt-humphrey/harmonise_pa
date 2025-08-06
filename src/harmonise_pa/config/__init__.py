@@ -1,2 +1,2 @@
-from .paths import OG_DATA, RAW_DATA, INTERIM_DATA, PROCESSED_DATA
+from .paths import INTERIM_DATA, OG_DATA, PROCESSED_DATA, RAW_DATA
 from .variables import DATASETS

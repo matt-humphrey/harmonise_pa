@@ -5,11 +5,13 @@ from polars import DataFrame
 
 # TODO: create a config file to explicitly define which variables should have which values replaced
 # Do this for rounding also
+# Perhaps this is unnecessary/overkill, provided it's not incorrectly replacing values
 
 
 def replace_missing_values(df: DataFrame) -> DataFrame:
     """Replace values for each given column that..."""
     return df.with_columns(
+        pl.col("^.*WEIGHT$").replace({888: None, 999: None}),
         pl.col("^.*HEIGHT$").replace({-99: None, 888: None, 999: None}),
         pl.col("^.*A3$").replace({999: None}),  # 999 for all
         pl.col("^.*A4$").replace({-99: None, 999: None}),  # -99 for G200, 999 for G201 to G210
@@ -19,21 +21,26 @@ def replace_missing_values(df: DataFrame) -> DataFrame:
         pl.col("^.*A8$").replace({999: None}),  # 999 for all bar G220 and G227
         pl.col("^.*A9$").replace({999: None}),  # 999 for all bar G220 and G227
         pl.col("^.*A10$").replace({999: None}),  # 999 for all bar G220 and G227
+        pl.col("^.*A12$").replace({999: None}),
+        pl.col("^.*A13$").replace({999: None}),
+        pl.col("^.*A15$").replace({999: None}),
+        pl.col("^.*BP[1-2]$").replace({-99: None, -88: None, 999: None}),
     )
 
 
 def apply_rounding(df: DataFrame) -> DataFrame:
     """Apply rounding to numeric columns"""
     return df.with_columns(
+        pl.col("^.*WEIGHT$").round(decimals=2, mode="half_away_from_zero"),
         pl.col("^.*HEIGHT$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A3$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A4$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A5$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A6$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A7$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A8$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A9$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A10$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col("^.*A([3-9]|10)$").round(decimals=1, mode="half_away_from_zero"),
+    )
+
+
+def recast_types(df: DataFrame) -> DataFrame:
+    """Recast column types as new type"""
+    return df.with_columns(
+        pl.col("^.*BP[1-5]$").cast(pl.Int64),
     )
 
 

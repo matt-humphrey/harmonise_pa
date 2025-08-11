@@ -91,7 +91,6 @@ DATASETS = {
             "G105_BP3",
             "G105_BP4",
             "G105_BP5",
-            "G105_BPCD",  # TODO: check!
         ],
         "rename": {
             "G105_A1": "G105_WEIGHT",

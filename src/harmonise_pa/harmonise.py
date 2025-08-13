@@ -7,44 +7,61 @@ from polars import DataFrame
 # Do this for rounding also
 # Perhaps this is unnecessary/overkill, provided it's not incorrectly replacing values
 
+__all__ = [
+    "apply_rounding",
+    "harmonise_bpcd",
+    "harmonise_bmi",
+    "harmonise_height",
+    "harmonise_mean_height",
+    "harmonise_mean_wrist_width",
+    "recast_types",
+    "replace_missing_values",
+]
 
-def replace_missing_values(df: DataFrame) -> DataFrame:
+
+def replace_missing_values(df: DataFrame, dset: str) -> DataFrame:
     """Replace values for each given column that..."""
     return df.with_columns(
-        pl.col("^.*WEIGHT$").replace({888: None, 999: None}),
-        pl.col("^.*HEIGHT$").replace({-99: None, 888: None, 999: None}),
-        pl.col("^.*A3$").replace({999: None}),  # 999 for all
-        pl.col("^.*A4$").replace({-99: None, 999: None}),  # -99 for G200, 999 for G201 to G210
-        pl.col("^.*A5$").replace({-99: None, 999: None}),  # -99 for G200, 999 for G201 on
-        pl.col("^.*A6$").replace({-99: None, 999: None}),  # -99 for G200, 999 for all bar G114/G227
-        pl.col("^.*A7$").replace({-99: None, 999: None}),  # -99 for G200, 999 for all bar G220/G227
-        pl.col("^.*A8$").replace({999: None}),  # 999 for all bar G220 and G227
-        pl.col("^.*A9$").replace({999: None}),  # 999 for all bar G220 and G227
-        pl.col("^.*A10$").replace({999: None}),  # 999 for all bar G220 and G227
-        pl.col("^.*A12$").replace({999: None}),
-        pl.col("^.*A13$").replace({999: None}),
-        pl.col("^.*A15$").replace({999: None}),
-        pl.col("^.*BP[1-2]$").replace({-99: None, -88: None, 999: None}),
+        pl.col(f"^{dset}_WEIGHT$").replace({888: None, 999: None}),
+        pl.col(f"^{dset}_HEIGHT$").replace({-99: None, 888: None, 999: None}),
+        # pl.col(f"{dset}_A3$").replace({999: None}),
+        # pl.col(f"{dset}_A4$").replace({-99: None, 999: None}),
+        # pl.col(f"{dset}_A5$").replace({-99: None, 999: None}),
+        # pl.col(f"{dset}_A6$").replace({-99: None, 999: None}),
+        # pl.col(f"{dset}_A7$").replace({-99: None, 999: None}),
+        # pl.col(f"{dset}_A8$").replace({999: None}),
+        # pl.col(f"{dset}_A9$").replace({999: None}),
+        # pl.col(f"{dset}_A10$").replace({999: None}),
+        # pl.col(f"{dset}_A12$").replace({999: None}),
+        # pl.col(f"{dset}_A13$").replace({999: None}),
+        # pl.col(f"{dset}_A15$").replace({999: None}),
+        # pl.col(f"{dset}_BP([125]|4[6-9]|5[0-9]|6[0-3])]$").replace(
+        #     {-99: None, -88: None, 999: None}
+        # ),
+        # pl.col(f"{dset}_BPCD$").replace({-99: None}),
     )
 
 
-def apply_rounding(df: DataFrame) -> DataFrame:
+def apply_rounding(df: DataFrame, dset: str) -> DataFrame:
     """Apply rounding to numeric columns"""
     return df.with_columns(
-        pl.col("^.*WEIGHT$").round(decimals=2, mode="half_away_from_zero"),
-        pl.col("^.*HEIGHT$").round(decimals=1, mode="half_away_from_zero"),
-        pl.col("^.*A([3-9]|10)$").round(decimals=1, mode="half_away_from_zero"),
+        pl.col(f"{dset}_WEIGHT$").round(2),
+        pl.col(f"{dset}_HEIGHT$").round(1),
+        pl.col(f"{dset}_A([3-9]|10)$").round(1),
     )
 
 
-def recast_types(df: DataFrame) -> DataFrame:
+def recast_types(df: DataFrame, dset: str) -> DataFrame:
     """Recast column types as new type"""
     return df.with_columns(
-        pl.col("^.*BP[1-5]$").cast(pl.Int64),
+        pl.col(f"{dset}_BP\d+$").cast(pl.Int64),
+        pl.col(f"{dset}_BPCD$").cast(pl.Int64),
     )
 
 
-def harmonise_height(df: DataFrame) -> DataFrame:
+# TODO: re-write so it can selectively applied to the appropriate dataset
+# For instance, it's going to return an error when applied to G214, because it won't contain G217_HEIGHT, nor the other variables
+def harmonise_height(df: DataFrame, dset: str) -> DataFrame:
     """
     Harmonise `HEIGHT` variables.
 
@@ -71,3 +88,45 @@ def harmonise_height(df: DataFrame) -> DataFrame:
         .otherwise(pl.col("G0G1_HEIGHT"))
         .alias("G0G1_HEIGHT")
     )
+
+
+def harmonise_mean_height(df: DataFrame) -> DataFrame:
+    """
+    Return the mean of the two measurements and drop the raw measurements.
+    """
+    return df.with_columns(
+        pl.mean_horizontal("G228_A2A", "G228_A2B").alias("G228_HEIGHT"),
+    ).drop("G228_A2A", "G228_A2B")
+
+
+def harmonise_mean_wrist_width(df: DataFrame) -> DataFrame:
+    """
+    Return the mean of the two measurements and drop the raw measurements.
+    """
+    return df.with_columns(
+        pl.mean_horizontal("G220_A17A", "G220_A17B").alias("G220_A17"),
+        pl.mean_horizontal("G220_A23A", "G220_A23B").alias("G220_A23"),
+    ).drop("G220_A17A", "G220_A17B", "G220_A23A", "G220_A23B")
+
+
+def harmonise_bmi(df: DataFrame, dset: str) -> DataFrame:
+    """
+    Create BMI variable from height (H) and weight (W)
+
+    $$BMI = W/H^2$$
+    """
+    return df.with_columns(
+        (pl.col(f"{dset}_WEIGHT") / (pl.col(f"{dset}_HEIGHT") / 100) ** 2)
+        .round(2)
+        .alias(f"{dset}_BMI")
+    )
+
+
+def harmonise_bpcd(df: DataFrame) -> DataFrame:
+    """
+    Re-code string values to integers
+
+    Originally -99="Missing";A="Mother nad";B="Mother pregnant";C="Mother hypertensive";D="Father nad";E="Father hypertensive"
+    Harmonised to 0="No abnormality detected";1="Pregnant";2="Increased blood pressure"
+    """
+    return df.with_columns(pl.col("G105_BPCD").replace({"A": 0, "B": 1, "C": 2, "D": 0, "E": 2}))

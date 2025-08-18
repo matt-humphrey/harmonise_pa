@@ -1,5 +1,6 @@
 # This file should define the functions to harmonise each variable/dataset
 
+
 import polars as pl
 from polars import DataFrame
 
@@ -9,9 +10,11 @@ from polars import DataFrame
 
 __all__ = [
     "apply_rounding",
-    "harmonise_bpcd",
     "harmonise_bmi",
+    "harmonise_bpcd",
+    "harmonise_bp_time",
     "harmonise_height",
+    "harmonise_mean_blood_pressure",
     "harmonise_mean_height",
     "harmonise_mean_wrist_width",
     "recast_types",
@@ -22,40 +25,34 @@ __all__ = [
 def replace_missing_values(df: DataFrame, dset: str) -> DataFrame:
     """Replace values for each given column that..."""
     return df.with_columns(
-        pl.col(f"^{dset}_WEIGHT$").replace({888: None, 999: None}),
+        pl.col(f"^{dset}_A([3-9]|1[0-5])$").replace({-99: None, 999: None}),
+        pl.col(f"{dset}_BP([1-5]|4[6-9]|[5-7][0-9]|8[01])]$").replace(
+            {-99: None, -88: None, 999: None}
+        ),
+        pl.col(f"^{dset}_BPCD$").replace({-99: None}),
+        pl.col(f"^{dset}_BP_CUFF$").replace({9: None, 99: None}),
+        pl.col(f"^{dset}_BP_TEMP$").replace({-99: None, 999: None}),
         pl.col(f"^{dset}_HEIGHT$").replace({-99: None, 888: None, 999: None}),
-        # pl.col(f"{dset}_A3$").replace({999: None}),
-        # pl.col(f"{dset}_A4$").replace({-99: None, 999: None}),
-        # pl.col(f"{dset}_A5$").replace({-99: None, 999: None}),
-        # pl.col(f"{dset}_A6$").replace({-99: None, 999: None}),
-        # pl.col(f"{dset}_A7$").replace({-99: None, 999: None}),
-        # pl.col(f"{dset}_A8$").replace({999: None}),
-        # pl.col(f"{dset}_A9$").replace({999: None}),
-        # pl.col(f"{dset}_A10$").replace({999: None}),
-        # pl.col(f"{dset}_A12$").replace({999: None}),
-        # pl.col(f"{dset}_A13$").replace({999: None}),
-        # pl.col(f"{dset}_A15$").replace({999: None}),
-        # pl.col(f"{dset}_BP([125]|4[6-9]|5[0-9]|6[0-3])]$").replace(
-        #     {-99: None, -88: None, 999: None}
-        # ),
-        # pl.col(f"{dset}_BPCD$").replace({-99: None}),
+        pl.col(f"^{dset}_WEIGHT$").replace({888: None, 999: None}),
     )
 
 
 def apply_rounding(df: DataFrame, dset: str) -> DataFrame:
     """Apply rounding to numeric columns"""
     return df.with_columns(
-        pl.col(f"{dset}_WEIGHT$").round(2),
-        pl.col(f"{dset}_HEIGHT$").round(1),
-        pl.col(f"{dset}_A([3-9]|10)$").round(1),
+        pl.col(f"^{dset}_A([3-9]|10)$").round(1),
+        pl.col(f"^{dset}_BP_TEMP$").round(1),
+        pl.col(f"^{dset}_HEIGHT$").round(1),
+        pl.col(f"^{dset}_WEIGHT$").round(2),
     )
 
 
 def recast_types(df: DataFrame, dset: str) -> DataFrame:
     """Recast column types as new type"""
     return df.with_columns(
-        pl.col(f"{dset}_BP\d+$").cast(pl.Int64),
-        pl.col(f"{dset}_BPCD$").cast(pl.Int64),
+        pl.col(f"^{dset}_BP\d+$").cast(pl.Int64),
+        pl.col(f"^{dset}_BPCD$").cast(pl.Int64),
+        pl.col(f"^{dset}_BP_CUFF$").cast(pl.Int64),
     )
 
 
@@ -126,7 +123,40 @@ def harmonise_bpcd(df: DataFrame) -> DataFrame:
     """
     Re-code string values to integers
 
-    Originally -99="Missing";A="Mother nad";B="Mother pregnant";C="Mother hypertensive";D="Father nad";E="Father hypertensive"
+    Originally -99="Missing";A="Mother nad";B="Mother pregnant";C="Mother hypertensive";
+    D="Father nad";E="Father hypertensive"
     Harmonised to 0="No abnormality detected";1="Pregnant";2="Increased blood pressure"
     """
     return df.with_columns(pl.col("G105_BPCD").replace({"A": 0, "B": 1, "C": 2, "D": 0, "E": 2}))
+
+
+def harmonise_mean_blood_pressure(df: DataFrame) -> DataFrame:
+    """
+    Return the mean systolic and diastolic blood pressures, and heart rate, for G208.
+
+    In most cases, BP3 was the same, except 10 instances where it differed.
+    For simplicity, I assumed the first instance of BP3 was correct.
+    """
+    return df.with_columns(
+        G208_BP1=pl.mean_horizontal("G208_BP1", "G208_BP1_2ND"),
+        G208_BP2=pl.mean_horizontal("G208_BP2", "G208_BP2_2ND"),
+        G208_BP5=pl.mean_horizontal("G208_BP5", "G208_BP5_2ND"),
+    ).drop("G208_BP1_2ND", "G208_BP2_2ND", "G208_BP3_2ND", "G208_BP5_2ND")
+
+
+def harmonise_bp_time(df: DataFrame) -> DataFrame:
+    """
+    Convert G0G1_BP_TIME from seconds (Float) to Time.
+
+    Correct two timestamps that were wrongly input.
+    """
+    return df.with_columns(
+        pl.when(pl.col("ID").eq(185901))  # ID 185901 from 1315:00:00 to 13:15:00
+        .then(47700)
+        .when(pl.col("ID").eq(141701))  # ID 141701 from 1030:00:00 to 10:30:00
+        .then(37800)
+        .otherwise(pl.col("G0G1_BP_TIME"))
+        .alias("G0G1_BP_TIME")
+    ).with_columns(
+        (pl.col("G0G1_BP_TIME").cast(pl.Int64) * 1000000000).cast(pl.Time).alias("G0G1_BP_TIME")
+    )

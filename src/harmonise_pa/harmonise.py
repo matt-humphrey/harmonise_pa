@@ -1,13 +1,7 @@
-# This file should define the functions to harmonise each variable/dataset
-
 from functools import partial
 
 import polars as pl
 from polars import DataFrame
-
-# TODO: create a config file to explicitly define which variables should have which values replaced
-# Do this for rounding also
-# Perhaps this is unnecessary/overkill, provided it's not incorrectly replacing values
 
 __all__ = [
     "DATA_TRANSFORMS",

@@ -253,6 +253,7 @@ DATASETS = {
             "G214_CBP9",
             "G214_CBP10",
             "G214_CBP11",
+            "G214_PMOF_10",
         },
     },
     "G117": {
@@ -320,6 +321,7 @@ DATASETS = {
             "G217_ANTH_RA",
             "G217_XAMR_COM",
             "G217_A14",
+            "G217_VISC_SUBFATRATIO",
         },
     },
     "G220": {
@@ -401,6 +403,10 @@ DATASETS = {
             "G220_CBP11",
             "G220_NRESTINGBPMEASURES",
             "G220_NRESTINGHRMEASURES",
+            "G220_CTDG_SUPPLOCATION2",
+            "G220_CTNG_SUPPLOCATION2",
+            "G220_APCTDG_UD",
+            "G220_APCTDG_BASEUPDOWN",
         },
     },
     "G222": {
